@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Norylum — Serveur Média Auto-Hébergé</title>
+  <meta name="description" content="Serveur multimédia personnel haute performance en Rust. Direct Play O(1), multi-profils, contrôle parental, plugins. Open source, zéro cloud, zéro abonnement.">
+  <meta property="og:title" content="Norylum — Serveur Média Auto-Hébergé">
+  <meta property="og:description" content="Votre médiathèque. Votre serveur. Construit en Rust.">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#0B0B10">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #0B0B10;
+      --surface:     #111119;
+      --surface-2:   #18181F;
+      --surface-3:   #21212D;
+      --accent:      #E05A28;
+      --accent-low:  rgba(224,90,40,.10);
+      --accent-mid:  rgba(224,90,40,.25);
+      --text:        #EAEAF5;
+      --text-2:      #8A8AAA;
+      --text-3:      #48485A;
+      --border:      #1C1C28;
+      --border-2:    #242436;
+      --green:       #2DBD79;
+      --blue:        #5B8FD5;
+
+      --f-display: 'Syne', sans-serif;
+      --f-body:    'IBM Plex Sans', sans-serif;
+      --f-mono:    'IBM Plex Mono', monospace;
+
+      --r:    8px;
+      --r-lg: 14px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--f-body);
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    /* ─── NAV ─────────────────────────────────────────────── */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 48px;
+      background: rgba(11,11,16,.0);
+      border-bottom: 1px solid transparent;
+      transition: background .25s, border-color .25s;
+      backdrop-filter: blur(0px);
+    }
+    .nav.scrolled {
+      background: rgba(11,11,16,.88);
+      border-bottom-color: var(--border);
+      backdrop-filter: blur(20px);
+    }
+    .nav-logo {
+      font-family: var(--f-display);
+      font-size: 21px; font-weight: 800;
+      letter-spacing: -.03em; color: var(--text);
+      text-decoration: none; display: flex; align-items: center; gap: 2px;
+    }
+    .nav-logo-dot { color: var(--accent); }
+    .nav-links {
+      display: flex; align-items: center; gap: 36px; list-style: none;
+    }
+    .nav-links a {
+      font-size: 14px; font-weight: 500;
+      color: var(--text-2); text-decoration: none;
+      transition: color .15s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-gh {
+      display: flex; align-items: center; gap: 7px;
+      padding: 8px 18px;
+      background: var(--surface-3); border: 1px solid var(--border-2);
+      border-radius: var(--r);
+      font-size: 14px; font-weight: 500; color: var(--text) !important;
+      text-decoration: none;
+      transition: background .15s, border-color .15s;
+    }
+    .nav-gh:hover { background: var(--surface-2) !important; border-color: var(--text-3) !important; }
+
+    /* ─── HERO ────────────────────────────────────────────── */
+    .hero {
+      display: grid; grid-template-columns: 1fr 1fr;
+      align-items: center; gap: 60px;
+      min-height: 100vh;
+      padding: 120px 48px 80px;
+      max-width: 1200px; margin: 0 auto;
+    }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-family: var(--f-mono); font-size: 11px;
+      text-transform: uppercase; letter-spacing: .1em;
+      color: var(--accent); margin-bottom: 28px;
+    }
+    .hero-eyebrow::before {
+      content: ''; width: 24px; height: 1px; background: var(--accent);
+    }
+    .hero h1 {
+      font-family: var(--f-display);
+      font-size: clamp(44px, 5vw, 70px);
+      font-weight: 800; line-height: 1.04;
+      letter-spacing: -.035em; color: var(--text);
+      margin-bottom: 24px;
+    }
+    .hero h1 em { font-style: normal; color: var(--accent); }
+    .hero-lead {
+      font-size: 17px; color: var(--text-2);
+      line-height: 1.7; max-width: 440px; margin-bottom: 40px;
+    }
+    .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 9px;
+      padding: 13px 26px; border-radius: var(--r);
+      background: var(--accent); color: #fff;
+      font-family: var(--f-body); font-size: 15px; font-weight: 600;
+      text-decoration: none;
+      transition: opacity .15s, transform .1s;
+    }
+    .btn-primary:hover { opacity: .86; transform: translateY(-1px); }
+
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 9px;
+      padding: 13px 26px; border-radius: var(--r);
+      background: transparent; border: 1px solid var(--border-2);
+      color: var(--text-2);
+      font-family: var(--f-body); font-size: 15px; font-weight: 500;
+      text-decoration: none;
+      transition: color .15s, border-color .15s;
+    }
+    .btn-secondary:hover { color: var(--text); border-color: var(--text-3); }
+
+    /* ─── TERMINAL ────────────────────────────────────────── */
+    .terminal {
+      background: var(--surface);
+      border: 1px solid var(--border-2);
+      border-radius: var(--r-lg);
+      overflow: hidden;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,.025),
+        0 40px 100px rgba(0,0,0,.7);
+    }
+    .term-bar {
+      display: flex; align-items: center; gap: 8px;
+      padding: 13px 18px;
+      background: var(--surface-2);
+      border-bottom: 1px solid var(--border);
+    }
+    .dot { width: 11px; height: 11px; border-radius: 50%; }
+    .dot-r { background: #FF5F57; }
+    .dot-y { background: #FFBD2E; }
+    .dot-g { background: #28CA41; }
+    .term-title {
+      font-family: var(--f-mono); font-size: 12px;
+      color: var(--text-3); margin-left: 6px;
+    }
+    .term-body {
+      padding: 22px 24px 28px;
+      font-family: var(--f-mono); font-size: 12.5px;
+      line-height: 1.9; min-height: 300px;
+    }
+    .tl {
+      display: block; opacity: 0;
+      transform: translateY(5px);
+      transition: opacity .18s ease, transform .18s ease;
+    }
+    .tl.v { opacity: 1; transform: none; }
+    .tl-cmd  { color: var(--text-2); }
+    .tl-cmd b { color: var(--text); }
+    .tl-step { color: var(--text-3); }
+    .tl-step b { color: var(--blue); }
+    .tl-ok   { color: var(--green); }
+    .tl-head { color: var(--accent); }
+    .tl-blank { opacity: 0 !important; }
+    .tl-blank.v { opacity: 0 !important; }
+    .cursor {
+      display: inline-block; width: 7px; height: 13px;
+      background: var(--accent); vertical-align: text-bottom;
+      animation: blink 1.1s step-end infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    /* ─── LAYOUT HELPERS ──────────────────────────────────── */
+    .wrap {
+      max-width: 1200px; margin: 0 auto; padding: 0 48px;
+    }
+    .section { padding: 96px 0; }
+    .divider {
+      height: 1px; margin: 0 48px;
+      background: linear-gradient(90deg, transparent, var(--border-2) 30%, var(--border-2) 70%, transparent);
+    }
+    .eyebrow {
+      font-family: var(--f-mono); font-size: 11px;
+      text-transform: uppercase; letter-spacing: .1em;
+      color: var(--accent); margin-bottom: 16px;
+    }
+    .h2 {
+      font-family: var(--f-display);
+      font-size: clamp(30px, 3.5vw, 50px);
+      font-weight: 800; letter-spacing: -.03em;
+      line-height: 1.1; color: var(--text); margin-bottom: 16px;
+    }
+    .lead {
+      font-size: 16px; color: var(--text-2);
+      line-height: 1.7; max-width: 560px;
+    }
+
+    /* ─── FEATURES ────────────────────────────────────────── */
+    .features-grid {
+      display: grid; grid-template-columns: repeat(3,1fr);
+      gap: 1px; margin-top: 60px;
+      background: var(--border-2);
+      border: 1px solid var(--border-2);
+      border-radius: var(--r-lg); overflow: hidden;
+    }
+    .feat {
+      background: var(--surface);
+      padding: 36px 30px;
+      transition: background .2s;
+    }
+    .feat:hover { background: var(--surface-2); }
+    .feat-icon {
+      width: 42px; height: 42px; border-radius: var(--r);
+      background: var(--accent-low);
+      border: 1px solid var(--accent-mid);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 19px; margin-bottom: 20px;
+    }
+    .feat h3 {
+      font-family: var(--f-display);
+      font-size: 16px; font-weight: 700;
+      color: var(--text); letter-spacing: -.01em;
+      margin-bottom: 10px;
+    }
+    .feat p { font-size: 13.5px; color: var(--text-2); line-height: 1.6; }
+
+    /* ─── CLIENTS ─────────────────────────────────────────── */
+    .clients-grid {
+      display: grid; grid-template-columns: repeat(3,1fr);
+      gap: 18px; margin-top: 60px;
+    }
+    .client {
+      background: var(--surface);
+      border: 1px solid var(--border-2);
+      border-radius: var(--r-lg);
+      padding: 34px 28px;
+      transition: transform .2s, border-color .2s;
+    }
+    .client:hover { transform: translateY(-3px); border-color: var(--border-2); }
+    .client-platform {
+      font-family: var(--f-mono); font-size: 10px;
+      text-transform: uppercase; letter-spacing: .1em;
+      color: var(--accent); margin-bottom: 12px;
+    }
+    .client h3 {
+      font-family: var(--f-display); font-size: 22px;
+      font-weight: 800; letter-spacing: -.025em;
+      color: var(--text); margin-bottom: 12px;
+    }
+    .client p { font-size: 13.5px; color: var(--text-2); line-height: 1.6; }
+    .badge {
+      display: inline-block; margin-top: 20px;
+      padding: 4px 12px; border-radius: 20px;
+      font-family: var(--f-mono); font-size: 11px;
+    }
+    .badge-dev {
+      background: rgba(91,143,213,.1);
+      color: var(--blue);
+      border: 1px solid rgba(91,143,213,.2);
+    }
+
+    /* ─── TECH ────────────────────────────────────────────── */
+    .tech-band {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 72px 0;
+    }
+    .tech-tags {
+      display: flex; flex-wrap: wrap; gap: 10px; margin-top: 44px;
+    }
+    .tech-tag {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 18px;
+      background: var(--surface-2); border: 1px solid var(--border-2);
+      border-radius: var(--r);
+      font-family: var(--f-mono); font-size: 13px; color: var(--text-2);
+      transition: color .15s, border-color .15s;
+    }
+    .tech-tag:hover { color: var(--text); border-color: var(--text-3); }
+    .tech-sub {
+      font-size: 10px; text-transform: uppercase;
+      letter-spacing: .08em; color: var(--text-3); margin-left: 2px;
+    }
+
+    /* ─── AI CALLOUT ──────────────────────────────────────── */
+    .ai-callout {
+      position: relative; overflow: hidden;
+      background: var(--surface);
+      border: 1px solid var(--border-2);
+      border-radius: var(--r-lg);
+      padding: 56px 60px; margin: 0 48px;
+    }
+    .ai-callout::after {
+      content: '';
+      position: absolute; top: -80px; right: -80px;
+      width: 280px; height: 280px; pointer-events: none;
+      background: radial-gradient(circle, rgba(224,90,40,.07) 0%, transparent 70%);
+    }
+    .ai-callout .h2 { margin-bottom: 18px; }
+    .ai-callout p {
+      font-size: 16px; color: var(--text-2);
+      line-height: 1.7; max-width: 620px;
+    }
+
+    /* ─── REPOS ───────────────────────────────────────────── */
+    .repos-grid {
+      display: grid; grid-template-columns: repeat(3,1fr);
+      gap: 14px; margin-top: 60px;
+    }
+    .repo {
+      display: flex; flex-direction: column; gap: 10px;
+      background: var(--surface);
+      border: 1px solid var(--border-2);
+      border-radius: var(--r-lg); padding: 24px;
+      text-decoration: none;
+      transition: transform .18s, border-color .18s;
+    }
+    .repo:hover { transform: translateY(-2px); border-color: var(--border-2); }
+    .repo-name {
+      font-family: var(--f-mono); font-size: 13px;
+      color: var(--accent); font-weight: 500;
+    }
+    .repo-desc { font-size: 13px; color: var(--text-2); line-height: 1.55; flex: 1; }
+    .repo-lang {
+      display: flex; align-items: center; gap: 6px;
+      font-family: var(--f-mono); font-size: 11px; color: var(--text-3);
+    }
+    .ld { width: 9px; height: 9px; border-radius: 50%; }
+    .ld-rust   { background: #E05A28; }
+    .ld-kotlin { background: #A97BFF; }
+    .ld-swift  { background: #FA7343; }
+    .ld-json   { background: #5B8FD5; }
+    .ld-ts     { background: #3178C6; }
+
+    /* ─── CONTRIBUTORS ────────────────────────────────────── */
+    .contrib-list { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 48px; }
+    .contrib {
+      display: flex; align-items: center; gap: 16px;
+      padding: 20px 24px;
+      background: var(--surface); border: 1px solid var(--border-2);
+      border-radius: var(--r-lg); text-decoration: none;
+      transition: border-color .18s, transform .15s;
+    }
+    .contrib:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .contrib-ava {
+      width: 54px; height: 54px; border-radius: 50%;
+      background: var(--surface-3);
+      border: 2px solid var(--border-2); overflow: hidden; flex-shrink: 0;
+    }
+    .contrib-ava img { width: 100%; height: 100%; object-fit: cover; }
+    .contrib-name {
+      font-family: var(--f-display); font-size: 17px;
+      font-weight: 700; color: var(--text); letter-spacing: -.01em;
+    }
+    .contrib-role { font-size: 13px; color: var(--text-2); margin-top: 2px; }
+    .contrib-repos {
+      font-family: var(--f-mono); font-size: 10.5px;
+      color: var(--text-3); margin-top: 5px;
+    }
+
+    /* ─── FOOTER ──────────────────────────────────────────── */
+    .footer {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 20px;
+      max-width: 1200px; margin: 0 auto;
+      padding: 44px 48px;
+    }
+    .footer-logo {
+      font-family: var(--f-display); font-size: 18px;
+      font-weight: 800; letter-spacing: -.03em; color: var(--text);
+    }
+    .footer-logo span { color: var(--accent); }
+    .footer-meta { font-size: 12px; color: var(--text-3); margin-top: 4px; }
+    .footer-links { display: flex; gap: 24px; list-style: none; }
+    .footer-links a {
+      font-size: 13px; color: var(--text-3);
+      text-decoration: none; transition: color .15s;
+    }
+    .footer-links a:hover { color: var(--text-2); }
+
+    /* ─── ICONS (inline SVG helper class) ────────────────── */
+    .icon { flex-shrink: 0; }
+
+    /* ─── RESPONSIVE ──────────────────────────────────────── */
+    @media (max-width: 960px) {
+      .nav { padding: 16px 24px; }
+      .nav-links li:not(:last-child) { display: none; }
+      .hero {
+        grid-template-columns: 1fr;
+        min-height: auto;
+        padding: 100px 24px 56px;
+        gap: 44px;
+      }
+      .wrap { padding: 0 24px; }
+      .section { padding: 72px 0; }
+      .divider { margin: 0 24px; }
+      .features-grid { grid-template-columns: 1fr; }
+      .clients-grid  { grid-template-columns: 1fr; }
+      .repos-grid    { grid-template-columns: 1fr; }
+      .ai-callout    { margin: 0 24px; padding: 40px 32px; }
+      .footer        { padding: 40px 24px; flex-direction: column; align-items: flex-start; }
+      .tech-band .wrap { padding: 0 24px; }
+    }
+
+    @media (max-width: 600px) {
+      .hero h1 { font-size: 38px; }
+      .hero-actions { flex-direction: column; }
+      .hero-actions a { justify-content: center; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .tl { transition: none; opacity: 1; transform: none; }
+      .cursor { animation: none; opacity: 1; }
+      * { transition-duration: 0s !important; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── NAV ──────────────────────────────────────────────── -->
+<nav class="nav" id="nav">
+  <a href="#" class="nav-logo">Norylum<span class="nav-logo-dot">.</span></a>
+  <ul class="nav-links">
+    <li><a href="#features">Fonctionnalités</a></li>
+    <li><a href="#clients">Clients</a></li>
+    <li><a href="#contributors">Équipe</a></li>
+    <li>
+      <a href="https://github.com/Norylum" class="nav-gh" target="_blank" rel="noopener">
+        <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+        </svg>
+        GitHub
+      </a>
+    </li>
+  </ul>
+</nav>
+
+<!-- ─── HERO ──────────────────────────────────────────────── -->
+<div class="hero">
+
+  <div>
+    <div class="hero-eyebrow">Serveur multimédia open source</div>
+    <h1>Votre<br>médiathèque.<br><em>Votre serveur.</em></h1>
+    <p class="hero-lead">
+      Norylum est un serveur multimédia auto-hébergé haute performance, développé en Rust. Direct Play sans transcodage, multi-profils, contrôle parental intégré, système de plugins. Zéro cloud. Zéro abonnement.
+    </p>
+    <div class="hero-actions">
+      <a href="https://github.com/Norylum" target="_blank" rel="noopener" class="btn-primary">
+        <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+        </svg>
+        Voir sur GitHub
+      </a>
+      <a href="https://github.com/Norylum/protocol" target="_blank" rel="noopener" class="btn-secondary">
+        Documentation du protocole →
+      </a>
+    </div>
+  </div>
+
+  <!-- TERMINAL -->
+  <div class="terminal" aria-label="Exemple de démarrage du serveur Norylum" role="img">
+    <div class="term-bar" aria-hidden="true">
+      <span class="dot dot-r"></span>
+      <span class="dot dot-y"></span>
+      <span class="dot dot-g"></span>
+      <span class="term-title">norylum-server — bash</span>
+    </div>
+    <div class="term-body" id="term" aria-hidden="true"></div>
+  </div>
+
+</div>
+
+<!-- ─── FEATURES ──────────────────────────────────────────── -->
+<div class="divider"></div>
+<section class="section" id="features">
+  <div class="wrap">
+    <div class="eyebrow">Fonctionnalités</div>
+    <h2 class="h2">Conçu pour les exigeants</h2>
+    <p class="lead">Chaque décision architecturale vise la performance, la sécurité et la maîtrise totale de vos données.</p>
+
+    <div class="features-grid">
+      <div class="feat">
+        <div class="feat-icon">⚡</div>
+        <h3>Direct Play O(1)</h3>
+        <p>Streaming vidéo sans transcodage. Lecture par chunks de 64 Ko via Tokio — empreinte mémoire constante, indépendante de la taille du fichier.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">👥</div>
+        <h3>Multi-profils</h3>
+        <p>Comptes, profils, codes PIN par profil. Gestion complète des appareils et des sessions avec cycle de vie sécurisé.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">🔒</div>
+        <h3>Sécurité Fail-Closed</h3>
+        <p>Authentification Argon2id. Politique de refus par défaut — toute requête sans contexte valide est immédiatement rejetée.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">🧩</div>
+        <h3>Système de plugins</h3>
+        <p>Extensions tierces avec manifeste JSON et permissions granulaires : bibliothèque, métadonnées, lecture, réseau. Catalogue officiel maintenu.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">📚</div>
+        <h3>Bibliothèque intelligente</h3>
+        <p>Scan et indexation automatique. Extraction des métadonnées techniques via FFprobe. Films, séries, saisons et épisodes.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">📡</div>
+        <h3>Protocole ouvert</h3>
+        <p>API REST documentée OpenAPI 3.0.3. Source unique de vérité pour les clients officiels et les extensions tierces.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CLIENTS ────────────────────────────────────────────── -->
+<div class="divider"></div>
+<section class="section" id="clients">
+  <div class="wrap">
+    <div class="eyebrow">Clients natifs</div>
+    <h2 class="h2">Partout où vous regardez</h2>
+    <p class="lead">Des applications natives pour chaque plateforme, construites sur le même protocole ouvert.</p>
+
+    <div class="clients-grid">
+      <div class="client">
+        <div class="client-platform">Mobile · Téléviseur</div>
+        <h3>Android</h3>
+        <p>Application native Android et Android TV. Interface optimisée télécommande pour une expérience salon complète.</p>
+        <span class="badge badge-dev">En développement</span>
+      </div>
+      <div class="client">
+        <div class="client-platform">Mobile · Desktop · TV</div>
+        <h3>Apple</h3>
+        <p>Application native iOS, tvOS et macOS. Intégration aux écosystèmes Apple, cohérente sur tous les appareils.</p>
+        <span class="badge badge-dev">En développement</span>
+      </div>
+      <div class="client">
+        <div class="client-platform">Desktop</div>
+        <h3>Windows · Linux</h3>
+        <p>Application native Windows et Linux. Interface desktop complète pour gérer votre bibliothèque depuis votre machine.</p>
+        <span class="badge badge-dev">En développement</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── TECH STACK ─────────────────────────────────────────── -->
+<div class="tech-band">
+  <div class="wrap">
+    <div class="eyebrow">Stack technique</div>
+    <h2 class="h2">Construit pour durer</h2>
+    <div class="tech-tags">
+      <span class="tech-tag">🦀 Rust<span class="tech-sub">Langage</span></span>
+      <span class="tech-tag">⚡ Tokio<span class="tech-sub">Async runtime</span></span>
+      <span class="tech-tag">🌐 Axum<span class="tech-sub">HTTP / API</span></span>
+      <span class="tech-tag">🗄️ SQLite WAL<span class="tech-sub">Persistance</span></span>
+      <span class="tech-tag">🎬 FFprobe<span class="tech-sub">Inspection média</span></span>
+      <span class="tech-tag">🔐 Argon2id<span class="tech-sub">Authentification</span></span>
+      <span class="tech-tag">📦 Cargo Workspace<span class="tech-sub">Build</span></span>
+      <span class="tech-tag">📄 OpenAPI 3.0.3<span class="tech-sub">Protocole</span></span>
+      <span class="tech-tag">🔌 JSON Schema<span class="tech-sub">Plugins</span></span>
+    </div>
+  </div>
+</div>
+
+<!-- ─── AI PROPELLED ───────────────────────────────────────── -->
+<section class="section">
+  <div class="ai-callout">
+    <div class="eyebrow">AI-Propelled Development</div>
+    <h2 class="h2">Human-Directed,<br>AI-Built.</h2>
+    <p>
+      Norylum est un projet IA-Propelled : son développement est réalisé avec l'intelligence artificielle, sous direction et supervision humaine. L'IA participe à la conception de l'architecture, à l'écriture du code, aux tests automatisés et à la documentation. Le mainteneur humain pilote les décisions techniques, valide les choix et contrôle chaque commit.
+    </p>
+  </div>
+</section>
+
+<!-- ─── REPOS ──────────────────────────────────────────────── -->
+<div class="divider"></div>
+<section class="section">
+  <div class="wrap">
+    <div class="eyebrow">Open Source</div>
+    <h2 class="h2">L'écosystème</h2>
+    <p class="lead">Six dépôts publics, une vision unifiée. Chaque composant respecte le même protocole ouvert.</p>
+
+    <div class="repos-grid">
+      <a href="https://github.com/Norylum/server" class="repo" target="_blank" rel="noopener">
+        <div class="repo-name">norylum/server</div>
+        <div class="repo-desc">Monolithe modulaire Rust. Cœur du système — scan, streaming, auth, profils, plugins.</div>
+        <div class="repo-lang"><span class="ld ld-rust"></span>Rust</div>
+      </a>
+      <a href="https://github.com/Norylum/protocol" class="repo" target="_blank" rel="noopener">
+        <div class="repo-name">norylum/protocol</div>
+        <div class="repo-desc">Contrats d'API, spécifications réseau, schémas canoniques. Source unique de vérité.</div>
+        <div class="repo-lang"><span class="ld ld-json"></span>OpenAPI · JSON Schema</div>
+      </a>
+      <a href="https://github.com/Norylum/app-android" class="repo" target="_blank" rel="noopener">
+        <div class="repo-name">norylum/app-android</div>
+        <div class="repo-desc">Application native Android et Android TV.</div>
+        <div class="repo-lang"><span class="ld ld-kotlin"></span>Kotlin</div>
+      </a>
+      <a href="https://github.com/Norylum/app-apple" class="repo" target="_blank" rel="noopener">
+        <div class="repo-name">norylum/app-apple</div>
+        <div class="repo-desc">Application native iOS, tvOS et macOS.</div>
+        <div class="repo-lang"><span class="ld ld-swift"></span>Swift</div>
+      </a>
+      <a href="https://github.com/Norylum/norylum-app-desktop" class="repo" target="_blank" rel="noopener">
+        <div class="repo-name">norylum/norylum-app-desktop</div>
+        <div class="repo-desc">Application native Windows et Linux.</div>
+        <div class="repo-lang"><span class="ld ld-ts"></span>TypeScript</div>
+      </a>
+      <a href="https://github.com/Norylum/plugins" class="repo" target="_blank" rel="noopener">
+        <div class="repo-name">norylum/plugins</div>
+        <div class="repo-desc">Catalogue officiel des plugins de l'écosystème Norylum.</div>
+        <div class="repo-lang"><span class="ld ld-json"></span>JSON Schema</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CONTRIBUTORS ──────────────────────────────────────── -->
+<div class="divider"></div>
+<section class="section" id="contributors">
+  <div class="wrap">
+    <div class="eyebrow">Contributeurs</div>
+    <h2 class="h2">L'équipe</h2>
+    <p class="lead">Norylum est développé et maintenu sous la direction humaine d'une équipe passionnée par l'ingénierie open source.</p>
+
+    <div class="contrib-list">
+      <a href="https://github.com/antoine-vibe" class="contrib" target="_blank" rel="noopener">
+        <div class="contrib-ava">
+          <img
+            src="https://avatars.githubusercontent.com/u/201132707?v=4"
+            alt="Avatar de Antoine"
+            loading="lazy"
+            width="54" height="54"
+          >
+        </div>
+        <div>
+          <div class="contrib-name">Antoine</div>
+          <div class="contrib-role">Fondateur &amp; Lead Engineer</div>
+          <div class="contrib-repos">server · protocol · app-android · app-apple · desktop · plugins</div>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─────────────────────────────────────────────── -->
+<div class="divider"></div>
+<footer>
+  <div class="footer">
+    <div>
+      <div class="footer-logo">Norylum<span>.</span></div>
+      <div class="footer-meta">Licence MIT &nbsp;·&nbsp; © 2026 Norylum &nbsp;·&nbsp; Hébergé sur GitHub Pages</div>
+    </div>
+    <ul class="footer-links">
+      <li><a href="https://github.com/Norylum" target="_blank" rel="noopener">GitHub</a></li>
+      <li><a href="https://github.com/Norylum/protocol" target="_blank" rel="noopener">Documentation</a></li>
+      <li><a href="https://github.com/Norylum/plugins" target="_blank" rel="noopener">Plugins</a></li>
+    </ul>
+  </div>
+</footer>
+
+<script>
+  // Nav scroll effect
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 12);
+  }, { passive: true });
+
+  // Terminal boot animation
+  const LINES = [
+    { html: '$ <b>norylum-server</b> --config config.toml', cls: 'tl-cmd',  delay: 300 },
+    { html: null,                                            cls: 'tl-blank', delay: 160 },
+    { html: '✦  <b>Norylum</b> v0.1.0  Rust · Tokio · Axum', cls: 'tl-head', delay: 180 },
+    { html: null,                                            cls: 'tl-blank', delay: 100 },
+    { html: '→  <b>SQLite</b>      WAL mode activé',         cls: 'tl-step', delay: 160 },
+    { html: '→  <b>Library</b>     1 247 médias · 94 séries',cls: 'tl-step', delay: 160 },
+    { html: '→  <b>Auth</b>        Argon2id · sessions',     cls: 'tl-step', delay: 160 },
+    { html: '→  <b>Profiles</b>    4 profils · 2 appareils', cls: 'tl-step', delay: 160 },
+    { html: '→  <b>Streaming</b>   Direct Play · O(1) RAM',  cls: 'tl-step', delay: 160 },
+    { html: '→  <b>Plugins</b>     tmdb-metadata · subs',    cls: 'tl-step', delay: 160 },
+    { html: null,                                            cls: 'tl-blank', delay: 160 },
+    { html: '✓  Serveur démarré  <b>0.0.0.0:8080</b>',      cls: 'tl-ok',   delay: 240 },
+  ];
+
+  const container = document.getElementById('term');
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (reduced) {
+    LINES.forEach(l => {
+      const el = document.createElement('span');
+      el.className = `tl ${l.cls} v`;
+      el.innerHTML = l.html ?? '&nbsp;';
+      container.appendChild(el);
+    });
+    const c = document.createElement('span');
+    c.className = 'cursor';
+    container.appendChild(c);
+  } else {
+    let t = 600;
+    LINES.forEach((l, i) => {
+      const el = document.createElement('span');
+      el.className = `tl ${l.cls}`;
+      el.innerHTML = l.html ?? '&nbsp;';
+      container.appendChild(el);
+      setTimeout(() => el.classList.add('v'), t);
+      t += l.delay;
+      if (i === LINES.length - 1) {
+        setTimeout(() => {
+          const c = document.createElement('span');
+          c.className = 'cursor';
+          container.appendChild(c);
+        }, t + 180);
+      }
+    });
+  }
+</script>
+</body>
+</html>
