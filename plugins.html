@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plugins — Norylum</title>
+  <meta name="description" content="Le système de plugins Norylum : manifeste JSON, 10 permissions granulaires, principe du moindre privilège. Catalogue officiel : tmdb-metadata, opensubtitles.">
+  <link rel="canonical" href="https://norylum.org/plugins.html">
+  <meta property="og:title" content="Plugins — Norylum">
+  <meta property="og:description" content="Étendre Norylum sans lui faire confiance aveuglément. Manifeste JSON, permissions déclaratives, catalogue officiel.">
+  <meta property="og:url" content="https://norylum.org/plugins.html">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#0B0E14">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="nav" id="nav">
+  <a href="index.html" class="nav-logo">Norylum<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Accueil</a></li>
+    <li><a href="features.html">Fonctionnalités</a></li>
+    <li><a href="plugins.html" class="active">Plugins</a></li>
+    <li><a href="about.html">À propos</a></li>
+    <li>
+      <a href="https://github.com/Norylum" target="_blank" rel="noopener" class="nav-gh">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+        </svg>
+        GitHub
+      </a>
+    </li>
+  </ul>
+  <button class="nav-burger" aria-label="Menu" aria-expanded="false" id="burger">&#9776;</button>
+</nav>
+
+<main>
+
+  <header class="page-header">
+    <div class="wrap">
+      <span class="eyebrow">Plugins</span>
+      <h1 class="h1">Étendre Norylum<br>sans lui faire confiance.</h1>
+      <p class="lead" style="max-width:580px; margin-top:20px;">
+        Chaque plugin déclare les permissions dont il a besoin. Norylum ne lui accorde rien de plus. L'utilisateur contrôle ce qui est autorisé.
+      </p>
+    </div>
+  </header>
+
+  <!-- Comment ça marche ──────────────────────────────────── -->
+  <section class="section">
+    <div class="wrap">
+
+      <div class="editorial" style="border-top: none; padding-top: 0;">
+        <div class="e-left">
+          <span class="e-label">Architecture</span>
+          <h2 class="h2" style="margin-bottom:20px;">Un manifeste JSON.<br>Des permissions déclaratives.</h2>
+          <p class="e-body">
+            Chaque plugin est défini par un fichier <code>plugin.json</code> qui décrit son identité, sa version, son point d'entrée et les permissions qu'il requiert. Ce manifeste est validé par Norylum avant que le plugin puisse être chargé.
+          </p>
+          <p class="e-body" style="margin-top:14px;">
+            Les permissions suivent le principe du moindre privilège. Un plugin de métadonnées qui veut interroger TMDB doit demander <code>network:outbound</code> explicitement. Un plugin qui ne demande pas <code>library:write</code> ne peut pas modifier votre bibliothèque — même si son code essaie.
+          </p>
+          <p class="e-body" style="margin-top:14px;">
+            L'identifiant d'un plugin (<code>id</code>) est en kebab-case, immuable, et doit être unique dans le catalogue. Une fois publié, il ne change pas.
+          </p>
+        </div>
+        <div class="e-right">
+          <pre><code><span class="k">{</span>
+  <span class="k">"id"</span>: <span class="s">"tmdb-metadata"</span>,
+  <span class="k">"name"</span>: <span class="s">"TheMovieDB Metadata Provider"</span>,
+  <span class="k">"version"</span>: <span class="s">"1.0.0"</span>,
+  <span class="k">"description"</span>: <span class="s">"Enrichit les fiches films et\n  séries avec affiches TMDB."</span>,
+  <span class="k">"entrypoint"</span>: <span class="s">"dist/index.js"</span>,
+  <span class="k">"type"</span>: <span class="s">"metadata"</span>,
+  <span class="k">"permissions"</span>: [
+    <span class="s">"library:read"</span>,
+    <span class="s">"metadata:write"</span>,
+    <span class="s">"network:outbound"</span>
+  ],
+  <span class="k">"author"</span>: <span class="k">{</span>
+    <span class="k">"name"</span>: <span class="s">"Norylum Community"</span>,
+    <span class="k">"url"</span>: <span class="s">"https://github.com/norylum"</span>
+  <span class="k">}</span>,
+  <span class="k">"license"</span>: <span class="s">"GPL-3.0-or-later"</span>,
+  <span class="k">"norylum_version"</span>: <span class="s">"&gt;=1.0.0"</span>
+<span class="k">}</span></code></pre>
+        </div>
+      </div>
+
+      <!-- Tableau des permissions ──────────────────────── -->
+      <div style="margin-top: 72px;">
+        <span class="eyebrow eyebrow-blue">Référentiel des permissions</span>
+        <h2 class="h2" style="margin-bottom:12px;">10 permissions disponibles.</h2>
+        <p class="lead" style="margin-bottom:0; max-width:560px;">
+          Chaque permission est accordée ou refusée individuellement. L'utilisateur peut installer un plugin en désactivant certaines permissions — le plugin doit en tenir compte.
+        </p>
+
+        <div style="background:var(--surface); border:1px solid var(--surface-2); border-radius:var(--r-lg); overflow:hidden; margin-top:32px;">
+          <table class="perm-table">
+            <thead>
+              <tr>
+                <th>Permission</th>
+                <th>Description</th>
+                <th>Sensibilité</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="perm-name">library:read</span></td>
+                <td>Lecture des métadonnées de la bibliothèque multimédia</td>
+                <td><span class="perm-low">Faible</span></td>
+              </tr>
+              <tr>
+                <td><span class="perm-name">library:write</span></td>
+                <td>Création ou modification d'éléments dans la bibliothèque</td>
+                <td><span class="perm-med">Moyenne</span></td>
+              </tr>
+              <tr>
+                <td><span class="perm-name">metadata:read</span></td>
+                <td>Consultation des métadonnées enrichies (affiches, synopsis, notes)</td>
+                <td><span class="perm-low">Faible</span></td>
+              </tr>
+              <tr>
+                <td><span class="perm-name">metadata:write</span></td>
+                <td>Écriture de métadonnées, affiches, résumés et notations</td>
+                <td><span class="perm-med">Moyenne</span></td>
+              </tr>
+              <tr>
+                <td><span class="perm-name">playback:read</span></td>
+                <td>Consultation des états et progressions de lecture</td>
+                <td><span class="perm-low">Faible</span></td>
+              </tr>
+              <tr>
+                <td><span class="perm-name">playback:write</span></td>
+                <td>Mise à jour de la progression de visionnage par profil</td>
+                <td><span class="perm-low">Faible</span></td>
+              </tr>
+              <tr>
+                <td><span class="perm-name">storage:read</span></td>
+                <td>Lecture dans le dossier de données propre au plugin</td>
+                <td><span class="perm-low">Faible</span></td>
+              </tr>
+              <tr>
+                <td><span class="perm-name">storage:write</span></td>
+                <td>Écriture dans le dossier de données propre au plugin</td>
+                <td><span class="perm-low">Faible</span></td>
+              </tr>
+              <tr>
+                <td><span class="perm-name">network:outbound</span></td>
+                <td>Requêtes HTTP/HTTPS externes (TMDB, OpenSubtitles, MusicBrainz…)</td>
+                <td><span class="perm-high">Haute</span></td>
+              </tr>
+              <tr>
+                <td><span class="perm-name">system:notifications</span></td>
+                <td>Émission de notifications système aux utilisateurs</td>
+                <td><span class="perm-med">Moyenne</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Catalogue officiel ─────────────────────────────────── -->
+  <div class="code-section">
+    <div class="wrap">
+      <span class="eyebrow">Catalogue officiel</span>
+      <h2 class="h2" style="margin-bottom:12px;">Les premiers plugins.</h2>
+      <p class="lead" style="margin-bottom:0; max-width:560px;">
+        Le catalogue officiel est maintenu dans le dépôt <a href="https://github.com/Norylum/plugins" target="_blank" rel="noopener" style="color:var(--accent); text-decoration:underline; text-underline-offset:3px;">norylum/plugins</a>.
+      </p>
+
+      <div class="plugin-grid">
+        <div class="plugin-card">
+          <div class="plugin-card-id">tmdb-metadata</div>
+          <div class="plugin-card-name">TheMovieDB Metadata Provider</div>
+          <p class="plugin-card-desc">
+            Enrichit automatiquement les fiches films et séries avec affiches, synopsis, casting et notations TMDB. Respecte les exigences de logo et d'attribution TMDB dans l'interface.
+          </p>
+          <div class="plugin-card-perms">
+            <span class="badge badge-blue">library:read</span>
+            <span class="badge badge-orange">metadata:write</span>
+            <span class="badge badge-error">network:outbound</span>
+          </div>
+        </div>
+
+        <div class="plugin-card">
+          <div class="plugin-card-id">opensubtitles</div>
+          <div class="plugin-card-name">OpenSubtitles Provider</div>
+          <p class="plugin-card-desc">
+            Télécharge et associe automatiquement les sous-titres depuis OpenSubtitles.org. Supporte SRT et VTT. Indexe les sous-titres par langue et par fichier vidéo.
+          </p>
+          <div class="plugin-card-perms">
+            <span class="badge badge-blue">library:read</span>
+            <span class="badge badge-orange">metadata:write</span>
+            <span class="badge badge-error">network:outbound</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Créer un plugin ────────────────────────────────────── -->
+  <section class="section">
+    <div class="wrap">
+      <div class="editorial" style="border-bottom:none;">
+        <div class="e-left">
+          <span class="e-label">Développement</span>
+          <h2 class="h2" style="margin-bottom:20px;">Créer un plugin.</h2>
+          <p class="e-body">
+            La spécification complète du manifeste est définie dans le schéma JSON <code>schemas/plugin-manifest.schema.json</code> du dépôt protocol. Un manifeste valide peut être vérifié avec Ajv CLI.
+          </p>
+          <p class="e-body" style="margin-top:14px;">
+            Le point d'entrée peut être un fichier JavaScript, WebAssembly, ou un binaire natif selon la plateforme. La compatibilité de version est déclarée dans le champ <code>norylum_version</code> (SemVer range).
+          </p>
+          <p class="e-body" style="margin-top:14px;">
+            Pour soumettre un plugin au catalogue officiel, ouvrez une pull request sur le dépôt <a href="https://github.com/Norylum/plugins" target="_blank" rel="noopener" style="color:var(--accent); text-decoration:underline; text-underline-offset:3px;">norylum/plugins</a>.
+          </p>
+          <div style="margin-top:28px; display:flex; gap:12px; flex-wrap:wrap;">
+            <a href="https://github.com/Norylum/protocol" target="_blank" rel="noopener" class="btn-primary">Voir la spécification</a>
+            <a href="https://github.com/Norylum/plugins" target="_blank" rel="noopener" class="btn-secondary">Catalogue GitHub</a>
+          </div>
+        </div>
+        <div class="e-right">
+          <div class="detail-box" style="margin-bottom:16px;">
+            <span class="detail-box-label">Validation du manifeste</span>
+            <div class="detail-box-title">Ajv CLI</div>
+            <pre style="margin-top:12px; padding:16px; font-size:12px;">npx ajv-cli validate \
+  --spec=draft7 \
+  -s schemas/plugin-manifest.schema.json \
+  -d plugin.json</pre>
+          </div>
+          <div class="detail-box">
+            <span class="detail-box-label">Champs obligatoires</span>
+            <p class="detail-box-text" style="font-family:var(--f-mono); font-size:12px; line-height:1.9;">
+              <code style="background:none; padding:0; color:var(--accent-2);">id</code> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;kebab-case · immuable<br>
+              <code style="background:none; padding:0; color:var(--accent-2);">name</code> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string · lisible<br>
+              <code style="background:none; padding:0; color:var(--accent-2);">version</code> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SemVer 2.0.0<br>
+              <code style="background:none; padding:0; color:var(--accent-2);">description</code> &nbsp;string<br>
+              <code style="background:none; padding:0; color:var(--accent-2);">entrypoint</code> &nbsp;&nbsp;chemin relatif<br>
+              <code style="background:none; padding:0; color:var(--accent-2);">permissions</code> &nbsp;array (peut être vide)
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="footer-inner wrap">
+    <div class="footer-left">
+      <div class="footer-brand">Norylum<span>.</span></div>
+      <div class="footer-meta">Licence MIT · © 2026 Norylum · <a href="https://github.com/Norylum" target="_blank" rel="noopener">GitHub</a></div>
+    </div>
+    <nav class="footer-nav" aria-label="Navigation pied de page">
+      <a href="features.html">Fonctionnalités</a>
+      <a href="plugins.html">Plugins</a>
+      <a href="about.html">À propos</a>
+      <a href="https://github.com/Norylum/protocol" target="_blank" rel="noopener">Documentation</a>
+    </nav>
+  </div>
+</footer>
+
+<script src="main.js"></script>
+</body>
+</html>

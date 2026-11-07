@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>À propos — Norylum</title>
+  <meta name="description" content="L'histoire de Norylum, un serveur multimédia open source AI-Propelled. L'IA écrit le code. Antoine dirige. Licence MIT.">
+  <link rel="canonical" href="https://norylum.org/about.html">
+  <meta property="og:title" content="À propos — Norylum">
+  <meta property="og:description" content="Un projet open source AI-Propelled. L'IA écrit le code. Antoine dirige. Chaque commit est relu et validé par un humain.">
+  <meta property="og:url" content="https://norylum.org/about.html">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#0B0E14">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .about-prose {
+      max-width: 680px;
+    }
+    .about-prose p {
+      font-size: 17px;
+      color: var(--text-2);
+      line-height: 1.8;
+    }
+    .about-prose p + p {
+      margin-top: 20px;
+    }
+    .about-prose a {
+      color: var(--accent);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .repos-section {
+      background: var(--surface);
+      border-top: 1px solid var(--surface-2);
+      border-bottom: 1px solid var(--surface-2);
+      padding: 72px 0;
+    }
+    .repo-list {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 14px; margin-top: 32px;
+    }
+    .repo-item {
+      background: var(--bg);
+      border: 1px solid var(--surface-2);
+      border-radius: var(--r);
+      padding: 20px;
+      text-decoration: none;
+      transition: border-color .18s;
+    }
+    .repo-item:hover { border-color: rgba(249,115,22,.35); }
+    .repo-item-name { font-family: var(--f-mono); font-size: 12.5px; color: var(--accent); margin-bottom: 6px; }
+    .repo-item-desc { font-size: 13px; color: var(--text-2); line-height: 1.5; }
+    .repo-item-lang { margin-top: 10px; font-family: var(--f-mono); font-size: 11px; color: var(--text-2); display: flex; align-items: center; gap: 5px; }
+    .ld { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+    .ld-rust   { background: #E05A28; }
+    .ld-swift  { background: #FA7343; }
+    .ld-kotlin { background: #A97BFF; }
+    .ld-ts     { background: #3178C6; }
+    .ld-json   { background: #38BDF8; }
+
+    @media (max-width: 768px) {
+      .repo-list { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav" id="nav">
+  <a href="index.html" class="nav-logo">Norylum<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Accueil</a></li>
+    <li><a href="features.html">Fonctionnalités</a></li>
+    <li><a href="plugins.html">Plugins</a></li>
+    <li><a href="about.html" class="active">À propos</a></li>
+    <li>
+      <a href="https://github.com/Norylum" target="_blank" rel="noopener" class="nav-gh">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+        </svg>
+        GitHub
+      </a>
+    </li>
+  </ul>
+  <button class="nav-burger" aria-label="Menu" aria-expanded="false" id="burger">&#9776;</button>
+</nav>
+
+<main>
+
+  <header class="page-header">
+    <div class="wrap">
+      <span class="eyebrow">À propos</span>
+      <h1 class="h1">Un projet qui<br>grandit en public.</h1>
+      <p class="lead" style="max-width:580px; margin-top:20px;">
+        Norylum est un serveur multimédia open source, développé avec l'aide de l'IA, sous direction humaine. MIT License. Code disponible sur GitHub.
+      </p>
+    </div>
+  </header>
+
+  <!-- Histoire ───────────────────────────────────────────── -->
+  <section class="section">
+    <div class="wrap">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start;">
+        <div class="about-prose">
+          <span class="eyebrow" style="margin-bottom:24px;">Pourquoi ce projet</span>
+          <p>
+            Norylum est né d'une conviction simple : vos fichiers multimédia n'ont pas à vivre sur le serveur de quelqu'un d'autre. Plex demande un compte. Jellyfin fonctionne mais reste une base de code C# héritée. Il y avait de la place pour quelque chose de propre, rapide, et construit avec les bons outils.
+          </p>
+          <p>
+            Rust s'est imposé naturellement. L'écosystème async (Tokio, Axum) permet de gérer des centaines de connexions simultanées sans gaspiller de mémoire. SQLite avec WAL est suffisant pour une bibliothèque personnelle et ne nécessite pas d'infrastructure supplémentaire. FFprobe est la référence pour l'inspection des fichiers vidéo.
+          </p>
+          <p>
+            Ce n'est pas encore un produit fini. Les clients Android, iOS et desktop sont en développement. L'acquisition de contenu (le téléchargement sécurisé via VPN) est en construction. Mais le serveur fonctionne, le protocole est documenté, et le code est là.
+          </p>
+        </div>
+        <div>
+          <div class="detail-box" style="margin-bottom:16px;">
+            <span class="detail-box-label">Architecture</span>
+            <div class="detail-box-title">Monolithe modulaire Rust</div>
+            <p class="detail-box-text">
+              Un binaire, plusieurs crates. Chaque domaine (auth, library, streaming, playback, plugins) est un module séparé avec ses propres responsabilités. Pas de microservices, pas d'overhead réseau interne.
+            </p>
+          </div>
+          <div class="detail-box">
+            <span class="detail-box-label">Dépendances principales</span>
+            <p class="detail-box-text" style="font-family:var(--f-mono); font-size:12px; line-height:1.9; margin-top:8px;">
+              <span style="color:var(--accent-2);">tokio</span> &nbsp;&nbsp;&nbsp;&nbsp;runtime async<br>
+              <span style="color:var(--accent-2);">axum</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HTTP + routing<br>
+              <span style="color:var(--accent-2);">sqlx</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SQLite async<br>
+              <span style="color:var(--accent-2);">argon2</span> &nbsp;&nbsp;&nbsp;password hashing<br>
+              <span style="color:var(--accent-2);">serde</span> &nbsp;&nbsp;&nbsp;&nbsp;sérialisation JSON<br>
+              <span style="color:var(--accent-2);">librqbit</span> &nbsp;seeder BitTorrent
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AI-Propelled ───────────────────────────────────────── -->
+  <div class="divider"></div>
+  <section class="section">
+    <div class="wrap">
+      <span class="eyebrow">AI-Propelled Development</span>
+      <h2 class="h2" style="margin-bottom:0; max-width:600px;">L'IA écrit le code.<br>Antoine dirige.</h2>
+
+      <div class="ai-callout">
+        <div class="ai-callout-quote">
+          "Human-Directed, AI-Built."
+        </div>
+        <p class="ai-callout-text">
+          Chaque commit est relu et validé par un humain avant d'atterrir dans le repo. L'IA propose, Antoine décide. Les choix d'architecture, les limites de ce qui peut être mergé, les arbitrages entre complexité et robustesse — tout ça reste entre les mains du mainteneur humain.
+        </p>
+      </div>
+
+      <div class="about-prose">
+        <p>
+          Ce modèle de développement n'est pas de la magie. L'IA génère du code que les développeurs humains génèrent aussi — avec les mêmes bugs potentiels, les mêmes angles morts. La différence, c'est la vitesse. Et la nécessité d'une relecture encore plus rigoureuse.
+        </p>
+        <p>
+          Norylum est transparent à ce sujet. Le README du serveur le dit clairement. L'objectif n'est pas de cacher l'implication de l'IA, mais de montrer que ce mode de développement peut produire un code sérieux, testé, avec une architecture cohérente — à condition que quelqu'un de compétent soit aux commandes.
+        </p>
+        <p>
+          Les tests sont écrits. L'API est documentée. Les décisions d'architecture sont tracées dans les commits. La supervision humaine n'est pas un détail de communication, c'est ce qui différencie un projet AI-Propelled d'un projet AI-generated abandonné.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contributeurs ──────────────────────────────────────── -->
+  <div class="divider"></div>
+  <section class="section-sm">
+    <div class="wrap">
+      <span class="eyebrow">Équipe</span>
+      <h2 class="h2" style="margin-bottom:12px;">Un projet maintenu<br>par une personne.</h2>
+      <p class="lead" style="margin-bottom:36px; max-width:520px;">
+        Norylum est un projet personnel. Antoine décide de ce qui entre dans le code, de ce qui attend, et de ce qui ne sera jamais mergé.
+      </p>
+      <a href="https://github.com/antoine-vibe" target="_blank" rel="noopener" class="contrib-card">
+        <div class="contrib-avatar">
+          <img
+            src="https://avatars.githubusercontent.com/u/201132707?v=4"
+            alt="Avatar de Antoine"
+            width="64" height="64"
+            loading="lazy"
+          >
+        </div>
+        <div>
+          <div class="contrib-name">Antoine</div>
+          <div class="contrib-handle">@antoine-vibe · @Antoine-XeoluxCorp</div>
+          <div class="contrib-role">Fondateur &amp; Lead Engineer</div>
+          <div class="contrib-repos">server · protocol · app-android · app-apple · norylum-app-desktop · plugins · platform-website</div>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- Open Source ────────────────────────────────────────── -->
+  <div class="repos-section">
+    <div class="wrap">
+      <span class="eyebrow eyebrow-blue">Open Source · MIT</span>
+      <h2 class="h2" style="margin-bottom:12px;">7 dépôts publics.</h2>
+      <p class="lead" style="margin-bottom:0; max-width:540px;">
+        Tout le code est sur <a href="https://github.com/Norylum" target="_blank" rel="noopener" style="color:var(--accent); text-decoration:underline; text-underline-offset:3px;">github.com/Norylum</a>. MIT License. Contributions bienvenues via pull request.
+      </p>
+      <div class="repo-list">
+        <a href="https://github.com/Norylum/server" target="_blank" rel="noopener" class="repo-item">
+          <div class="repo-item-name">norylum/server</div>
+          <div class="repo-item-desc">Monolithe modulaire Rust. Cœur du serveur.</div>
+          <div class="repo-item-lang"><span class="ld ld-rust"></span>Rust</div>
+        </a>
+        <a href="https://github.com/Norylum/protocol" target="_blank" rel="noopener" class="repo-item">
+          <div class="repo-item-name">norylum/protocol</div>
+          <div class="repo-item-desc">API REST, schémas JSON, OpenAPI 3.0.3.</div>
+          <div class="repo-item-lang"><span class="ld ld-json"></span>OpenAPI · JSON Schema</div>
+        </a>
+        <a href="https://github.com/Norylum/app-android" target="_blank" rel="noopener" class="repo-item">
+          <div class="repo-item-name">norylum/app-android</div>
+          <div class="repo-item-desc">Application native Android et Android TV.</div>
+          <div class="repo-item-lang"><span class="ld ld-kotlin"></span>Kotlin</div>
+        </a>
+        <a href="https://github.com/Norylum/app-apple" target="_blank" rel="noopener" class="repo-item">
+          <div class="repo-item-name">norylum/app-apple</div>
+          <div class="repo-item-desc">Application native iOS, tvOS et macOS.</div>
+          <div class="repo-item-lang"><span class="ld ld-swift"></span>Swift</div>
+        </a>
+        <a href="https://github.com/Norylum/norylum-app-desktop" target="_blank" rel="noopener" class="repo-item">
+          <div class="repo-item-name">norylum/norylum-app-desktop</div>
+          <div class="repo-item-desc">Application native Windows et Linux.</div>
+          <div class="repo-item-lang"><span class="ld ld-ts"></span>TypeScript</div>
+        </a>
+        <a href="https://github.com/Norylum/plugins" target="_blank" rel="noopener" class="repo-item">
+          <div class="repo-item-name">norylum/plugins</div>
+          <div class="repo-item-desc">Catalogue officiel des plugins.</div>
+          <div class="repo-item-lang"><span class="ld ld-json"></span>JSON Schema</div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer class="footer">
+  <div class="footer-inner wrap">
+    <div class="footer-left">
+      <div class="footer-brand">Norylum<span>.</span></div>
+      <div class="footer-meta">Licence MIT · © 2026 Norylum · <a href="https://github.com/Norylum" target="_blank" rel="noopener">GitHub</a></div>
+    </div>
+    <nav class="footer-nav" aria-label="Navigation pied de page">
+      <a href="features.html">Fonctionnalités</a>
+      <a href="plugins.html">Plugins</a>
+      <a href="about.html">À propos</a>
+      <a href="https://github.com/Norylum/protocol" target="_blank" rel="noopener">Documentation</a>
+    </nav>
+  </div>
+</footer>
+
+<script src="main.js"></script>
+</body>
+</html>

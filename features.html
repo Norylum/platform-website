@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fonctionnalités — Norylum</title>
+  <meta name="description" content="Direct Play O(1), authentification Argon2id, multi-profils, bibliothèque FFprobe, protocole OpenAPI 3.0.3, acquisition V3. Le détail technique de Norylum.">
+  <link rel="canonical" href="https://norylum.org/features.html">
+  <meta property="og:title" content="Fonctionnalités — Norylum">
+  <meta property="og:description" content="Direct Play O(1), Argon2id, multi-profils, FFprobe, OpenAPI 3.0.3. Le détail technique du serveur Norylum.">
+  <meta property="og:url" content="https://norylum.org/features.html">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#0B0E14">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* ── ROUTE TABLE ──────────────────────────────────────── */
+    .route-table {
+      width: 100%; border-collapse: collapse;
+      font-size: 13px; margin-top: 24px;
+    }
+    .route-table th {
+      text-align: left; padding: 10px 14px;
+      font-family: var(--f-mono); font-size: 10.5px;
+      text-transform: uppercase; letter-spacing: .08em;
+      color: var(--text-2); border-bottom: 1px solid var(--surface-2);
+      font-weight: 400;
+    }
+    .route-table td {
+      padding: 13px 14px;
+      border-bottom: 1px solid rgba(30,38,52,.7);
+      color: var(--text-2); vertical-align: middle;
+      font-family: var(--f-mono); font-size: 12.5px;
+    }
+    .route-table tr:last-child td { border-bottom: none; }
+    .route-table tr:hover td { background: rgba(19,24,34,.5); }
+    .method-get  { color: var(--success); }
+    .method-post { color: var(--warning); }
+    .route-path  { color: var(--accent-2); }
+    .route-desc  { font-family: var(--f-body); font-size: 13px; color: var(--text-2); }
+    .route-auth  { color: var(--accent); }
+
+    /* ── INLINE DETAIL ────────────────────────────────────── */
+    .inline-detail {
+      background: var(--surface);
+      border: 1px solid var(--surface-2);
+      border-radius: var(--r-lg);
+      padding: 24px 28px;
+      margin-top: 20px;
+    }
+    .inline-detail p { font-size: 14px; color: var(--text-2); line-height: 1.65; }
+    .inline-detail p + p { margin-top: 10px; }
+    .inline-detail code { font-size: 12px; }
+  </style>
+</head>
+<body>
+
+<nav class="nav" id="nav">
+  <a href="index.html" class="nav-logo">Norylum<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Accueil</a></li>
+    <li><a href="features.html" class="active">Fonctionnalités</a></li>
+    <li><a href="plugins.html">Plugins</a></li>
+    <li><a href="about.html">À propos</a></li>
+    <li>
+      <a href="https://github.com/Norylum" target="_blank" rel="noopener" class="nav-gh">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+        </svg>
+        GitHub
+      </a>
+    </li>
+  </ul>
+  <button class="nav-burger" aria-label="Menu" aria-expanded="false" id="burger">&#9776;</button>
+</nav>
+
+<main>
+
+  <header class="page-header">
+    <div class="wrap">
+      <span class="eyebrow">Fonctionnalités</span>
+      <h1 class="h1">Ce que fait Norylum,<br>en détail.</h1>
+      <p class="lead" style="max-width:580px;">
+        Pas de liste marketing. Le détail technique de ce qui est implémenté, comment ça fonctionne, et ce qui est encore en cours.
+      </p>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="wrap">
+
+      <!-- 1. Direct Play ───────────────────────────────── -->
+      <div class="editorial">
+        <div class="e-left">
+          <span class="e-label">Streaming · HTTP 206</span>
+          <h2 class="h2" style="margin-bottom:20px;">Direct Play<br>sans transcodage.</h2>
+          <p class="e-body">
+            Le serveur sert les fichiers vidéo tels quels, sans réencodage. Le client reçoit le flux original — codec, résolution, bitrate inchangés. C'est au client de gérer la décompression.
+          </p>
+          <p class="e-body" style="margin-top:14px;">
+            La lecture s'effectue par morceaux de 64 Ko via des streams asynchrones Tokio (<code>ReaderStream</code> + <code>AsyncReadExt::take</code>). Le serveur ne charge jamais un fichier entier en mémoire — l'empreinte RAM reste constante, indépendamment de la taille du fichier.
+          </p>
+          <p class="e-body" style="margin-top:14px;">
+            Les demandes de plage partielle (header <code>Range: bytes=X-Y</code>) sont gérées avec précision. Les plages invalides ou hors limites retournent <code>416 Range Not Satisfiable</code> avec le header <code>Content-Range: bytes */[taille]</code>.
+          </p>
+        </div>
+        <div class="e-right">
+          <div class="detail-box" style="margin-bottom:16px;">
+            <span class="detail-box-label">Réponse standard</span>
+            <div class="detail-box-title">GET /v1/media/{id}</div>
+            <p class="detail-box-text">
+              <code>200 OK</code> · <code>Accept-Ranges: bytes</code><br>
+              <code>Content-Length: [taille exacte]</code><br>
+              <code>Content-Type: video/mp4</code>
+            </p>
+          </div>
+          <div class="detail-box" style="margin-bottom:16px;">
+            <span class="detail-box-label">Lecture progressive</span>
+            <div class="detail-box-title">Range: bytes=0-1048575</div>
+            <p class="detail-box-text">
+              <code>206 Partial Content</code><br>
+              <code>Content-Range: bytes 0-1048575/42000000</code><br>
+              <code>Content-Length: 1048576</code>
+            </p>
+          </div>
+          <div class="detail-box">
+            <span class="detail-box-label">Mémoire</span>
+            <div class="detail-box-title">O(1) — Constant</div>
+            <p class="detail-box-text">Chunks de 64 Ko en RAM quel que soit le fichier source.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Auth Argon2id ─────────────────────────────── -->
+      <div class="editorial rev">
+        <div class="e-left">
+          <div class="detail-box">
+            <span class="detail-box-label">En-têtes requis</span>
+            <div class="detail-box-title">Toutes les routes protégées</div>
+            <p class="detail-box-text" style="font-family:var(--f-mono); font-size:12.5px; line-height:1.9;">
+              <code style="background:none; padding:0; color:var(--accent-2);">x-account-id</code> &nbsp;string · requis<br>
+              <code style="background:none; padding:0; color:var(--accent-2);">x-profile-id</code> &nbsp;string · requis<br>
+              <code style="background:none; padding:0; color:var(--accent-2);">x-device-id</code> &nbsp;&nbsp;string · requis<br>
+              <code style="background:none; padding:0; color:var(--accent-2);">x-is-child</code> &nbsp;&nbsp;&nbsp;boolean · optionnel<br>
+              <code style="background:none; padding:0; color:var(--accent-2);">x-age-rating-max</code> integer · optionnel
+            </p>
+          </div>
+        </div>
+        <div class="e-right">
+          <span class="e-label">Authentification</span>
+          <h2 class="h2" style="margin-bottom:20px;">Argon2id.<br>Sessions Bearer.</h2>
+          <p class="e-body">
+            Les mots de passe sont hashés avec Argon2id — l'algorithme recommandé par OWASP pour la résistance aux attaques GPU. Pas de MD5, pas de bcrypt vieillissant.
+          </p>
+          <p class="e-body" style="margin-top:14px;">
+            Chaque session est un token Bearer avec un cycle de vie complet : création, renouvellement, expiration. Les appareils sont enregistrés individuellement et peuvent être révoqués.
+          </p>
+          <p class="e-body" style="margin-top:14px;">
+            Chaque requête doit porter trois en-têtes de contexte : <code>x-account-id</code>, <code>x-profile-id</code>, <code>x-device-id</code>. L'absence de l'un d'eux déclenche un <code>401</code> immédiat — la politique fail-closed s'applique.
+          </p>
+        </div>
+      </div>
+
+      <!-- 3. Multi-profils ─────────────────────────────── -->
+      <div class="editorial">
+        <div class="e-left">
+          <span class="e-label">Profils &amp; PIN</span>
+          <h2 class="h2" style="margin-bottom:20px;">Plusieurs profils,<br>une seule instance.</h2>
+          <p class="e-body">
+            Un compte Norylum peut gérer plusieurs profils — adultes et enfants. Chaque profil a son propre code PIN, sa propre liste d'appareils, et ses propres règles de contrôle parental.
+          </p>
+          <p class="e-body" style="margin-top:14px;">
+            Le contrôle parental est géré au niveau du serveur, pas du client. Un profil enfant avec <code>x-is-child: true</code> et <code>x-age-rating-max: 10</code> ne peut pas accéder à un film noté 16+, quelle que soit l'application cliente.
+          </p>
+          <p class="e-body" style="margin-top:14px;">
+            Les sessions ont un cycle de vie géré : création lors du login, invalidation lors du logout, expiration automatique. L'historique de visionnage est conservé par profil.
+          </p>
+        </div>
+        <div class="e-right">
+          <div class="detail-box">
+            <span class="detail-box-label">Contrôle parental</span>
+            <div class="detail-box-title">Filtrage côté serveur</div>
+            <p class="detail-box-text">
+              Le filtre s'applique indépendamment du client. Un profil enfant avec <code>x-age-rating-max: 10</code> ne recevra jamais un média noté au-delà dans la liste <code>GET /v1/library/media</code>.
+            </p>
+          </div>
+          <div class="detail-box" style="margin-top:16px;">
+            <span class="detail-box-label">Progression de lecture</span>
+            <div class="detail-box-title">POST /v1/playback/progress</div>
+            <p class="detail-box-text">
+              Chaque profil conserve sa position de lecture par média. La progression est enregistrée avec la position, la durée totale, et l'état de complétion.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Bibliothèque & FFprobe ─────────────────────── -->
+      <div class="editorial rev">
+        <div class="e-left">
+          <div class="detail-box">
+            <span class="detail-box-label">Scan & indexation</span>
+            <div class="detail-box-title">POST /v1/library/scan</div>
+            <p class="detail-box-text">
+              Déclenche l'inspection des dossiers configurés. FFprobe extrait les métadonnées techniques de chaque fichier : codec vidéo/audio, résolution, bitrate, durée, container. Les identifiants de médias sont stables une fois générés.
+            </p>
+          </div>
+          <div class="detail-box" style="margin-top:16px;">
+            <span class="detail-box-label">Stockage</span>
+            <div class="detail-box-title">SQLite en mode WAL</div>
+            <p class="detail-box-text">
+              Write-Ahead Logging permet les lectures concurrentes sans bloquer les écritures. Base de données locale, pas de dépendance réseau externe pour les métadonnées.
+            </p>
+          </div>
+        </div>
+        <div class="e-right">
+          <span class="e-label">Bibliothèque</span>
+          <h2 class="h2" style="margin-bottom:20px;">FFprobe comme<br>source de vérité.</h2>
+          <p class="e-body">
+            L'indexation repose sur FFprobe pour l'extraction des métadonnées techniques. Pas d'hypothèses sur les fichiers — Norylum lit ce que FFprobe dit.
+          </p>
+          <p class="e-body" style="margin-top:14px;">
+            L'organisation films/séries repose sur l'analyse des noms de fichiers. Les séries sont regroupées par saison et épisode, les films sont identifiés par leur titre. Les identifiants de médias sont générés à l'indexation et restent stables.
+          </p>
+          <p class="e-body" style="margin-top:14px;">
+            Les métadonnées enrichies (affiches, synopsis, notes) viennent des plugins — TMDB, OpenSubtitles. La bibliothèque core ne dépend d'aucune API externe.
+          </p>
+        </div>
+      </div>
+
+      <!-- 5. Protocole REST OpenAPI ─────────────────────── -->
+      <div class="editorial" style="border-bottom:none; padding-bottom:0;">
+        <div class="e-left">
+          <span class="e-label">API &amp; Protocole</span>
+          <h2 class="h2" style="margin-bottom:20px;">OpenAPI 3.0.3.<br>Une source de vérité.</h2>
+          <p class="e-body">
+            Toutes les routes du serveur sont documentées dans un fichier <code>openapi.yaml</code>. C'est la source unique de vérité pour les clients officiels et les extensions tierces.
+          </p>
+          <p class="e-body" style="margin-top:14px;">
+            Les réponses d'erreur suivent un format JSON uniforme avec un code machine standardisé. Pas de messages d'erreur vagues ou variables selon la route.
+          </p>
+          <p class="e-body" style="margin-top:14px;">
+            Le dépôt <a href="https://github.com/Norylum/protocol" target="_blank" rel="noopener" style="color:var(--accent); text-decoration:underline; text-underline-offset:3px;">norylum/protocol</a> contient la spécification complète, les schémas JSON et les instructions de validation.
+          </p>
+        </div>
+        <div class="e-right">
+          <div style="background:var(--surface); border:1px solid var(--surface-2); border-radius:var(--r-lg); overflow:hidden;">
+            <table class="route-table" style="margin-top:0;">
+              <thead>
+                <tr>
+                  <th>Méthode</th>
+                  <th>Route</th>
+                  <th>Accès</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="method-get">GET</span></td>
+                  <td><span class="route-path">/health</span></td>
+                  <td><span class="route-auth">Public</span></td>
+                </tr>
+                <tr>
+                  <td><span class="method-post">POST</span></td>
+                  <td><span class="route-path">/v1/library/scan</span></td>
+                  <td><span style="color:var(--warning);">Auth</span></td>
+                </tr>
+                <tr>
+                  <td><span class="method-get">GET</span></td>
+                  <td><span class="route-path">/v1/library/media</span></td>
+                  <td><span style="color:var(--warning);">Auth + Parental</span></td>
+                </tr>
+                <tr>
+                  <td><span class="method-get">GET</span></td>
+                  <td><span class="route-path">/v1/media/{id}</span></td>
+                  <td><span style="color:var(--warning);">Auth + Range</span></td>
+                </tr>
+                <tr>
+                  <td><span class="method-post">POST</span></td>
+                  <td><span class="route-path">/v1/playback/progress</span></td>
+                  <td><span style="color:var(--warning);">Auth</span></td>
+                </tr>
+                <tr>
+                  <td><span class="method-get">GET</span></td>
+                  <td><span class="route-path">/v1/playback/{id}</span></td>
+                  <td><span style="color:var(--warning);">Auth</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Acquisition V3 ─────────────────────────────────────── -->
+  <div class="code-section">
+    <div class="wrap">
+      <span class="eyebrow eyebrow-blue">En cours — Acquisition V3</span>
+      <h2 class="h2" style="margin-bottom:16px; max-width:640px;">Le worker d'acquisition<br>est en construction.</h2>
+      <p class="lead" style="margin-bottom:24px; max-width:600px;">
+        Le système d'acquisition permet de demander du contenu depuis le serveur et de gérer son téléchargement via des sources autorisées. C'est une fonctionnalité avancée avec des contraintes de sécurité importantes.
+      </p>
+      <p class="body-text" style="max-width:600px; margin-bottom:16px;">
+        Ce qui fonctionne : le cycle de vie des demandes (création, approbation, annulation), la file d'attente SQLite avec verrous immédiats, l'enregistrement des sources avec validation HTTPS et hash SHA-256.
+      </p>
+      <p class="body-text" style="max-width:600px; margin-bottom:24px;">
+        Ce qui n'est pas encore activé : le téléchargement réseau réel, l'intégration Gluetun VPN, la recherche automatique de sources. Le worker tourne actuellement en mode <code>--offline-smoke</code> uniquement.
+      </p>
+      <span class="badge badge-warning">En développement actif</span>
+    </div>
+  </div>
+
+</main>
+
+<footer class="footer">
+  <div class="footer-inner wrap">
+    <div class="footer-left">
+      <div class="footer-brand">Norylum<span>.</span></div>
+      <div class="footer-meta">Licence MIT · © 2026 Norylum · <a href="https://github.com/Norylum" target="_blank" rel="noopener">GitHub</a></div>
+    </div>
+    <nav class="footer-nav" aria-label="Navigation pied de page">
+      <a href="features.html">Fonctionnalités</a>
+      <a href="plugins.html">Plugins</a>
+      <a href="about.html">À propos</a>
+      <a href="https://github.com/Norylum/protocol" target="_blank" rel="noopener">Documentation</a>
+    </nav>
+  </div>
+</footer>
+
+<script src="main.js"></script>
+</body>
+</html>
